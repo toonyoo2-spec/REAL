@@ -4,91 +4,370 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BRAND STRATEGY & ANALYSIS</title>
-    <link rel="stylesheet" href="css:style.css">
+    <style>
+        /* 글로벌 다크 스타일 (Black Eight 톤앤매너) */
+        :root {
+            --bg-dark: #0a0a0a;
+            --card-bg: #121212;
+            --border-color: #262626;
+            --border-hover: #525252;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-primary); line-height: 1.6; }
+
+        /* Navigation */
+        nav {
+            position: sticky; top: 0;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; gap: 2rem; padding: 1rem 2rem;
+            list-style: none;
+        }
+
+        .nav-container button {
+            background: none; border: none;
+            color: var(--text-secondary);
+            font-size: 0.9rem; font-weight: 600;
+            cursor: pointer; transition: color 0.2s;
+        }
+
+        .nav-container button:hover, .nav-container button.active {
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--accent-blue);
+            padding-bottom: 2px;
+        }
+
+        /* Header */
+        header {
+            padding: 3.5rem 2rem 2.5rem;
+            max-width: 1200px; margin: 0 auto;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-tag {
+            color: var(--accent-blue);
+            font-size: 0.85rem; font-weight: 700;
+            letter-spacing: 2px; text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem; font-weight: 800;
+            letter-spacing: -0.5px; margin-bottom: 1rem; line-height: 1.2;
+        }
+
+        header p { color: var(--text-secondary); font-size: 1.05rem; max-width: 650px; }
+
+        /* 화면 전환 처리 */
+        .page-view { display: none; }
+        .page-view.active { display: block; }
+
+        /* Main Content */
+        main { max-width: 1200px; margin: 3rem auto; padding: 0 2rem; }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem; margin-bottom: 3.5rem;
+        }
+
+        .metric-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem; border-radius: 8px;
+        }
+
+        .metric-label { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem; }
+        .metric-value { font-size: 2.25rem; font-weight: 800; color: var(--accent-green); }
+        .metric-value.negative { color: var(--accent-red); }
+
+        /* Category Grid */
+        .section-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 1.5rem; }
+        .category-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem;
+        }
+
+        .category-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 2rem;
+            cursor: pointer; display: flex; flex-direction: column;
+            justify-content: space-between; transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .category-card:hover { border-color: var(--border-hover); transform: translateY(-3px); }
+        .card-num { font-size: 0.85rem; font-weight: 700; color: var(--accent-blue); margin-bottom: 1rem; }
+        .category-card h3 { font-size: 1.25rem; margin-bottom: 0.75rem; }
+        .category-card p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem; }
+        .card-link { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
+
+        /* Detail Boxes */
+        .section-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 2rem; border-radius: 8px; margin-bottom: 2rem;
+        }
+
+        .comparison-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem; margin-top: 1.5rem;
+        }
+
+        .box-problem {
+            background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2);
+            border-left: 4px solid var(--accent-red); padding: 1.5rem; border-radius: 6px;
+        }
+
+        .box-solution {
+            background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2);
+            border-left: 4px solid var(--accent-green); padding: 1.5rem; border-radius: 6px;
+        }
+
+        .box-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.75rem; }
+        .box-problem .box-title { color: var(--accent-red); }
+        .box-solution .box-title { color: var(--accent-green); }
+
+        ul.detail-list { padding-left: 1.2rem; color: var(--text-secondary); font-size: 0.95rem; }
+        ul.detail-list li { margin-bottom: 0.5rem; }
+
+        .back-btn {
+            background: none; border: none; color: var(--text-secondary);
+            font-size: 0.85rem; cursor: pointer; margin-bottom: 1rem;
+        }
+        .back-btn:hover { color: var(--text-primary); }
+
+        footer {
+            max-width: 1200px; margin: 4rem auto 2rem; padding: 2rem;
+            border-top: 1px solid var(--border-color); color: var(--text-secondary);
+            font-size: 0.85rem; text-align: center;
+        }
+    </style>
 </head>
 <body>
 
+    <!-- 상단 네비게이션 -->
     <nav>
         <ul class="nav-container">
-            <li><a href="index.html" class="active">OVERVIEW</a></li>
-            <li><a href="brand-identity.html">IDENTITY</a></li>
-            <li><a href="visual-design.html">VISUAL</a></li>
-            <li><a href="customer-touchpoint.html">TOUCHPOINT</a></li>
-            <li><a href="action-plan.html">ROADMAP</a></li>
+            <li><button class="nav-btn active" onclick="showPage('overview')">OVERVIEW</button></li>
+            <li><button class="nav-btn" onclick="showPage('identity')">IDENTITY</button></li>
+            <li><button class="nav-btn" onclick="showPage('visual')">VISUAL</button></li>
+            <li><button class="nav-btn" onclick="showPage('touchpoint')">TOUCHPOINT</button></li>
+            <li><button class="nav-btn" onclick="showPage('roadmap')">ROADMAP</button></li>
         </ul>
     </nav>
 
-    <header>
-        <div class="header-tag">// BRAND DIAGNOSIS & ROADMAP</div>
-        <h1>브랜드 문제점 분석 및<br>개선 전략 방향</h1>
-        <p>현 브랜드 메시징과 고객 접점의 문제점을 진단하고, 지속 가능한 성장을 위한 리브랜딩 실행 로드맵을 제안합니다.</p>
-    </header>
+    <!-- 0. 메인 OVERVIEW 페이지 -->
+    <div id="overview" class="page-view active">
+        <header>
+            <div class="header-tag">// BRAND DIAGNOSIS & ROADMAP</div>
+            <h1>브랜드 문제점 분석 및<br>개선 전략 방향</h1>
+            <p>현 브랜드 메시징과 고객 접점의 문제점을 진단하고, 지속 가능한 성장을 위한 리브랜딩 실행 로드맵을 제안합니다.</p>
+        </header>
 
-    <main>
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-label">브랜드 인지도 일관성</div>
-                <div class="metric-value negative">-34%</div>
+        <main>
+            <div class="metrics-grid">
+                <div class="metric-card"><div class="metric-label">브랜드 인지도 일관성</div><div class="metric-value negative">-34%</div></div>
+                <div class="metric-card"><div class="metric-label">고객 이탈률 (접점 불일치)</div><div class="metric-value negative">42%</div></div>
+                <div class="metric-card"><div class="metric-label">개선 후 예상 메시지 전달력</div><div class="metric-value">+180%</div></div>
+                <div class="metric-card"><div class="metric-label">목표 실행 기간</div><div class="metric-value" style="color: var(--text-primary);">8 Weeks</div></div>
             </div>
-            <div class="metric-card">
-                <div class="metric-label">고객 이탈률 (접점 불일치)</div>
-                <div class="metric-value negative">42%</div>
+
+            <h2 class="section-title">분석 영역 선택</h2>
+            <div class="category-grid">
+                <div class="category-card" onclick="showPage('identity')">
+                    <div><div class="card-num">01</div><h3>브랜드 정체성 & 메시징</h3><p>핵심 가치 부재 및 핵심 타겟군과의 메시지 불일치 진단</p></div>
+                    <div class="card-link">자세히 보기 &rarr;</div>
+                </div>
+
+                <div class="category-card" onclick="showPage('visual')">
+                    <div><div class="card-num">02</div><h3>비주얼 에셋 & 톤앤매너</h3><p>파편화된 디자인 가이드라인 및 제작물별 비주얼 통일성 부족 분석</p></div>
+                    <div class="card-link">자세히 보기 &rarr;</div>
+                </div>
+
+                <div class="category-card" onclick="showPage('touchpoint')">
+                    <div><div class="card-num">03</div><h3>고객 접점 (Touchpoint)</h3><p>웹/앱/SNS 등 채널별 이탈 유발 요소 및 사용자 경험 문제점 분석</p></div>
+                    <div class="card-link">자세히 보기 &rarr;</div>
+                </div>
+
+                <div class="category-card" onclick="showPage('roadmap')">
+                    <div><div class="card-num">04</div><h3>개선 실행 로드맵</h3><p>단계별 리브랜딩 계획, 우선순위 과제 및 기대 효과 제안</p></div>
+                    <div class="card-link">자세히 보기 &rarr;</div>
+                </div>
             </div>
-            <div class="metric-card">
-                <div class="metric-label">개선 후 예상 메시지 전달력</div>
-                <div class="metric-value">+180%</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">목표 실행 기간</div>
-                <div class="metric-value" style="color: var(--text-primary);">8 Weeks</div>
-            </div>
-        </div>
+        </main>
+    </div>
 
-        <h2 class="section-title">분석 영역 선택</h2>
-        <div class="category-grid">
-            
-            <a href="pages/brand-identity.html" class="category-card">
-                <div>
-                    <div class="card-num">01</div>
-                    <h3>브랜드 정체성 & 메시징</h3>
-                    <p>핵심 가치 부재 및 핵심 타겟군과의 메시지 불일치 진단</p>
+    <!-- 1. IDENTITY 상세 페이지 -->
+    <div id="identity" class="page-view">
+        <header>
+            <button class="back-btn" onclick="showPage('overview')">&larr; OVERVIEW 로 돌아가기</button>
+            <div class="header-tag">// 01. BRAND IDENTITY & MESSAGING</div>
+            <h1>브랜드 정체성 & 메시징 분석</h1>
+            <p>현재 브랜드 슬로건과 실제 서비스 기능 간의 괴리로 인해 타겟 고객층에게 일관된 브랜드 핵심 가치를 전달하지 못하는 문제를 진단합니다.</p>
+        </header>
+        <main>
+            <section class="section-box">
+                <h2 class="section-title">현황 진단 및 개선안 비교 (AS-IS vs TO-BE)</h2>
+                <div class="comparison-grid">
+                    <div class="box-problem">
+                        <div class="box-title">⚠️ 주요 문제점 (AS-IS)</div>
+                        <ul class="detail-list">
+                            <li>브랜드 슬로건이 지나치게 추상적이어서 직관적인 이해 부족</li>
+                            <li>타겟 고객 설정과 실제 메시지 톤앤매너의 불일치</li>
+                            <li>내부 임직원 간 브랜드 핵심 가치 정의 상이</li>
+                        </ul>
+                    </div>
+                    <div class="box-solution">
+                        <div class="box-title">💡 개선 방향 (TO-BE)</div>
+                        <ul class="detail-list">
+                            <li>핵심 가치를 직관적으로 표현하는 한 줄 슬로건 재정의</li>
+                            <li>타겟 페르소나 재설정 및 메시징 톤앤매너 표준화 가이드라인 제작</li>
+                            <li>내부 브랜드 내재화(Internal Branding) 세션 진행</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="card-link">자세히 보기 &rarr;</div>
-            </a>
+            </section>
+        </main>
+    </div>
 
-            <a href="pages/visual-design.html" class="category-card">
-                <div>
-                    <div class="card-num">02</div>
-                    <h3>비주얼 에셋 & 톤앤매너</h3>
-                    <p>파편화된 디자인 가이드라인 및 제작물별 비주얼 통일성 부족 분석</p>
+    <!-- 2. VISUAL 상세 페이지 -->
+    <div id="visual" class="page-view">
+        <header>
+            <button class="back-btn" onclick="showPage('overview')">&larr; OVERVIEW 로 돌아가기</button>
+            <div class="header-tag">// 02. VISUAL ASSETS & TONEManner</div>
+            <h1>비주얼 에셋 & 톤앤매너 분석</h1>
+            <p>채널별로 파편화된 디자인 시스템과 일관성 없는 로고/컬러 활용으로 브랜드 신뢰도가 저하되는 문제를 진단합니다.</p>
+        </header>
+        <main>
+            <section class="section-box">
+                <h2 class="section-title">현황 진단 및 개선안 비교 (AS-IS vs TO-BE)</h2>
+                <div class="comparison-grid">
+                    <div class="box-problem">
+                        <div class="box-title">⚠️ 주요 문제점 (AS-IS)</div>
+                        <ul class="detail-list">
+                            <li>채널별(웹, SNS, IR) 로고 및 키 컬러 활용의 불일치</li>
+                            <li>통일된 디자인 시스템 부재로 제작물 생산성 감소</li>
+                            <li>브랜드 그래픽 모티브 부족으로 시각적 차별성 결여</li>
+                        </ul>
+                    </div>
+                    <div class="box-solution">
+                        <div class="box-title">💡 개선 방향 (TO-BE)</div>
+                        <ul class="detail-list">
+                            <li>통합 BX/UI 가이드라인 구축 (Color Palette, Typography, Logo system)</li>
+                            <li>재사용 가능한 컴포넌트 및 마케팅 템플릿 라이브러리 제작</li>
+                            <li>브랜드 고유 그래픽 모티브 개발 및 전 채널 확산</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="card-link">자세히 보기 &rarr;</div>
-            </a>
+            </section>
+        </main>
+    </div>
 
-            <a href="pages/customer-touchpoint.html" class="category-card">
-                <div>
-                    <div class="card-num">03</div>
-                    <h3>고객 접점 (Touchpoint)</h3>
-                    <p>웹/앱/SNS 등 채널별 이탈 유발 요소 및 사용자 경험 문제점 분석</p>
+    <!-- 3. TOUCHPOINT 상세 페이지 -->
+    <div id="touchpoint" class="page-view">
+        <header>
+            <button class="back-btn" onclick="showPage('overview')">&larr; OVERVIEW 로 돌아가기</button>
+            <div class="header-tag">// 03. CUSTOMER TOUCHPOINT ANALYSIS</div>
+            <h1>고객 접점 (Touchpoint) 분석</h1>
+            <p>고객 여정(Customer Journey) 상의 주요 접점에서 발생하는 메시지 단절 및 이탈 요인을 진단합니다.</p>
+        </header>
+        <main>
+            <section class="section-box">
+                <h2 class="section-title">현황 진단 및 개선안 비교 (AS-IS vs TO-BE)</h2>
+                <div class="comparison-grid">
+                    <div class="box-problem">
+                        <div class="box-title">⚠️ 주요 문제점 (AS-IS)</div>
+                        <ul class="detail-list">
+                            <li>광고 카피와 웹사이트 랜딩페이지 상의 유저 메시지 맥락 단절</li>
+                            <li>모바일 웹 UX/UI 가독성 저하로 인한 이탈률 심화</li>
+                            <li>구매/전환 후 고객 대상 CRM 메시지 관리 미흡</li>
+                        </ul>
+                    </div>
+                    <div class="box-solution">
+                        <div class="box-title">💡 개선 방향 (TO-BE)</div>
+                        <ul class="detail-list">
+                            <li>광고 - 랜딩 - 전환까지 유기적인 메시지 퍼널 연결</li>
+                            <li>핵심 랜딩페이지 반응형 UX/UI 개편 및 사용성 향상</li>
+                            <li>고객 여정 단계별 맞춤형 CRM 토크 및 메시지 시나리오 구축</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="card-link">자세히 보기 &rarr;</div>
-            </a>
+            </section>
+        </main>
+    </div>
 
-            <a href="pages/action-plan.html" class="category-card">
-                <div>
-                    <div class="card-num">04</div>
-                    <h3>개선 실행 로드맵</h3>
-                    <p>단계별 리브랜딩 계획, 우선순위 과제 및 기대 효과 제안</p>
+    <!-- 4. ROADMAP 상세 페이지 -->
+    <div id="roadmap" class="page-view">
+        <header>
+            <button class="back-btn" onclick="showPage('overview')">&larr; OVERVIEW 로 돌아가기</button>
+            <div class="header-tag">// 04. ACTION PLAN & ROADMAP</div>
+            <h1>개선 실행 로드맵 및 기대 효과</h1>
+            <p>우선순위에 따른 단계별 리브랜딩 실행 계획과 이를 통한 예상 기대 성과를 제시합니다.</p>
+        </header>
+        <main>
+            <section class="section-box">
+                <h2 class="section-title">현황 진단 및 개선안 비교 (AS-IS vs TO-BE)</h2>
+                <div class="comparison-grid">
+                    <div class="box-problem">
+                        <div class="box-title">⚠️ 주요 문제점 (AS-IS)</div>
+                        <ul class="detail-list">
+                            <li>모든 과제를 동시에 진행하여 자원 분산 및 완료 지연 위험</li>
+                            <li>단기적 성과와 장기적 브랜딩 간의 균형 부재</li>
+                            <li>개선 후 성과 측정 지표(KPI) 부재</li>
+                        </ul>
+                    </div>
+                    <div class="box-solution">
+                        <div class="box-title">💡 개선 방향 (TO-BE)</div>
+                        <ul class="detail-list">
+                            <li>8주 차 단계별 execution 로드맵 수립 (Phase 1 -> Phase 2 -> Phase 3)</li>
+                            <li>빠른 임팩트를 내는 Quick-win 과제 우선 실행</li>
+                            <li>브랜드 인지도, 메시지 전달률, 전환율 기반의 정량 KPI 설정 및 F/U</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="card-link">자세히 보기 &rarr;</div>
-            </a>
-
-        </div>
-    </main>
+            </section>
+        </main>
+    </div>
 
     <footer>
         &copy; 2026 BRAND STRATEGY REPORT. ALL RIGHTS RESERVED.
     </footer>
 
+    <!-- 페이지 전환 JS 스크립트 -->
+    <script>
+        function showPage(pageId) {
+            // 모든 페이지 숨기기
+            const pages = document.querySelectorAll('.page-view');
+            pages.forEach(p => p.classList.remove('active'));
+
+            // 선택한 페이지 보여주기
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) targetPage.classList.add('active');
+
+            // 네비게이션 버튼 활성화 상태 전환
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            const navIndex = { 'overview': 0, 'identity': 1, 'visual': 2, 'touchpoint': 3, 'roadmap': 4 };
+            if (buttons[navIndex[pageId]]) {
+                buttons[navIndex[pageId]].classList.add('active');
+            }
+
+            // 스크롤 상단 이동
+            window.scrollTo(0, 0);
+        }
+    </script>
 </body>
 </html>
